@@ -29,7 +29,23 @@ host=127.0.0.1
 port=18332
 ```
 
-## Tryint out
+## Trying out
+
+This projects comes in 3 parts:
+
+* The library (bitcoin.php & functions.php);
+* A few scripts to handle the on-the-fly operations (address creation, get balance);
+* The watcher program, started by bitcoind when a new transaciton arrives.
+
+This goal is the following:
+
+* We create a few addresses using create_address.php. Address is stored in the
+  bitcoin's wallet.  We can create a lot of addresses. The script will return both
+  the public & private keys.
+* When a new transaction involving an address in the wallet arrives, bitcoind
+  (which is configured to notify for transactions, see below), will launch
+  another php script in which it will read information and store it in a file.
+  You can use a database instead.
 
 ### Get balance
 
@@ -52,4 +68,17 @@ When a new transaction will arrive for one of its address, it will call the
 watcher.php script, that will retrieve transaction notified and then write in
 /tmp/notifications the received information.
 
-Each time a new TX is received or confirmed, it will call the script
+Each time a new TX is received or confirmed, it will call the script and write the following in the file:
+
+On reception:
+
+```
+[{"tx_id":"837e756f2c9a9970683fad89089e9ef8385591476b9450989a7e944c2c162140","tx_vout":0,"blockhash":null,"category":"receive","amount":0.25,"address":"2N38NMtmbav4rPXBoHdvDq9LRrUVjeDzgjF","confirmations":0,"unconfirmed":0,"confirmed":0.5}]
+```
+
+On confirmation:
+
+```
+[{"tx_id":"837e756f2c9a9970683fad89089e9ef8385591476b9450989a7e944c2c162140","tx_vout":0,"blockhash":"000000000000025cfb79f04150c7b182fa29f2fed9c42e4314f4cb49bc182fbc","category":"receive","amount":0.25,"address":"2N38NMtmbav4rPXBoHdvDq9LRrUVjeDzgjF","confirmations":1,"unconfirmed":0.25,"confirmed":0.5}]
+```
+
